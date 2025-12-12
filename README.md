@@ -1,166 +1,188 @@
 # Shirin Magazin - E-Commerce Platform
 
-Complete full-stack e-commerce application with React/Vanilla JS frontend and FastAPI backend.
+Full-stack e-commerce application with FastAPI backend and vanilla JavaScript frontend.
 
-## 🌟 Features
+## Tech Stack
 
-- **Guest Shopping**: Browse and add to cart without registration
-- **User Authentication**: Login with JWT tokens
-- **Admin Panel**: Full CRUD operations for products and categories
-- **Server-side Cart**: Calculations on server for security
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Search & Filter**: Find products by name, category, and price range
-- **Mobile Menu**: Burger menu for small screens
-- **Multiple Versions**: React and vanilla HTML/CSS/JS frontends
+**Backend:**
+- FastAPI 0.104.1
+- SQLAlchemy 2.0.23
+- SQLite
+- python-jose 3.3.0 (JWT)
+- passlib[bcrypt] 1.7.4
+- CORS enabled
 
-## 📁 Project Structure
+**Frontend:**
+- HTML5
+- CSS3
+- JavaScript (ES6 modules)
+- Bootstrap 5.3.2
+- Fetch API
+
+## Project Structure
 
 ```
-Shirin-Magazin/
-├── backend/           # FastAPI server
-│   ├── main.py       # API endpoints
-│   ├── models.py     # Database models
-│   ├── schemas.py    # Pydantic schemas
-│   ├── auth.py       # JWT authentication
-│   ├── database.py   # SQLAlchemy setup
-│   └── requirements.txt
-├── frontend/         # React+Vite app
-│   └── src/
-│       ├── App.jsx
-│       ├── components/
-│       └── api/
-├── frontend2/        # Vanilla JS version
-│   ├── index.html
-│   ├── css/
-│   └── js/
-└── README.md
+backend/
+├── main.py           # FastAPI app, all endpoints
+├── models.py         # SQLAlchemy: User, Category, Product, CartItem
+├── schemas.py        # Pydantic validation schemas
+├── auth.py           # JWT tokens, password hashing, auth dependencies
+├── database.py       # SQLAlchemy engine, SessionLocal, Base
+├── requirements.txt  # Python dependencies
+├── .env.example      # Environment variables template
+└── .gitignore
+
+frontend2/
+├── index.html        # HTML structure with Bootstrap
+├── css/
+│   └── style.css     # Complete styling, responsive (768px, 480px breakpoints)
+└── js/
+    ├── main.js       # App logic, state management, event handlers
+    ├── api.js        # API client, formatPrice function
+    └── cart.js       # LocalCart class for guest users
 ```
 
-## 🚀 Quick Start
+## Installation & Setup
 
-### Backend Setup
+### Backend
 
 ```bash
 cd backend
 
 # Create virtual environment
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# or
-venv\Scripts\activate  # Windows
+python3 -m venv venv
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
-
-# Create .env file (optional, defaults provided)
-cp .env.example .env
 
 # Run server
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Server runs on: `http://localhost:8000`
-API docs: `http://localhost:8000/docs`
+**Server runs on:** `http://192.168.1.4:8000` (network access)
 
-### Frontend - React Version
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Runs on: `http://localhost:5173`
-
-### Frontend - Vanilla JS Version
+### Frontend
 
 ```bash
 cd frontend2
+
+# Start HTTP server
 python3 -m http.server 8080
 ```
 
-Runs on: `http://localhost:8080`
+**Frontend runs on:** `http://192.168.1.4:8080`
 
-## 👤 Default Credentials
-
-- **Username**: admin
-- **Password**: admin123
-
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Authentication
-- `POST /auth/login` - Login user
-- `POST /auth/register` - Register new user
-- `GET /auth/me` - Get current user info
+- `POST /auth/login` - Body: `{username, password}` → `{access_token, token_type}`
+- `GET /auth/me` - Header: `Authorization: Bearer {token}` → User object
 
 ### Categories
-- `GET /categories` - List all categories
-- `POST /categories` - Create category (admin only)
-- `DELETE /categories/{id}` - Delete category (admin only)
+- `GET /categories` - Returns list of categories
+- `POST /categories` - Admin only, Body: `{name, description}`
+- `DELETE /categories/{id}` - Admin only
 
 ### Products
-- `GET /products` - List products (with optional category filter)
-- `POST /products` - Create product (admin only)
-- `PUT /products/{id}` - Update product (admin only)
-- `DELETE /products/{id}` - Delete product (admin only)
+- `GET /products` - Query: `?category_id={id}` (optional)
+- `POST /products` - Admin only, Body: `{name, description, price, image_url, category_id, stock}`
+- `PUT /products/{id}` - Admin only
+- `DELETE /products/{id}` - Admin only
 
 ### Cart (Authenticated Users)
-- `GET /cart` - Get user's cart
-- `POST /cart` - Add item to cart
-- `PUT /cart/{item_id}` - Update quantity
-- `DELETE /cart/{item_id}` - Remove from cart
-- `DELETE /cart` - Clear entire cart
+- `GET /cart` - Returns `{items: [], total: float}`
+- `POST /cart` - Body: `{product_id, quantity}`
+- `PUT /cart/{item_id}?quantity={qty}` - Update quantity
+- `DELETE /cart/{item_id}` - Remove item
+- `DELETE /cart` - Clear all items
 
-## 🛠 Technologies
+## Database Models
 
-**Backend:**
-- FastAPI
-- SQLAlchemy
-- SQLite
-- JWT (python-jose)
-- Bcrypt
+### User
+```python
+id: Integer (PK)
+username: String (unique)
+hashed_password: String
+is_admin: Boolean (default: False)
+created_at: DateTime
+```
 
-**Frontend (React):**
-- React 19
-- Vite
-- Axios
-- CSS3
+### Category
+```python
+id: Integer (PK)
+name: String (unique)
+description: String (nullable)
+created_at: DateTime
+products: Relationship → Product[]
+```
 
-**Frontend (Vanilla):**
-- HTML5
-- CSS3
-- Vanilla JavaScript (ES6 modules)
-- Bootstrap 5
+### Product
+```python
+id: Integer (PK)
+name: String
+description: String
+price: Float
+image_url: String (nullable)
+category_id: Integer (FK)
+stock: Integer
+created_at: DateTime
+category: Relationship → Category
+cart_items: Relationship → CartItem[]
+```
 
-## 📱 Features Details
+### CartItem
+```python
+id: Integer (PK)
+user_id: Integer (FK)
+product_id: Integer (FK)
+quantity: Integer
+created_at: DateTime
+product: Relationship → Product
+```
 
-### Guest Mode
-- Browse products without login
-- Add to cart (stored in localStorage)
-- Cart persists across sessions
+## Authentication
 
-### Admin Features
-- Create, read, update, delete products
-- Manage product categories
-- View all products
-- Set product stock levels
-- Add product images
+- Default admin: `username: admin`, `password: admin123`
+- JWT tokens created with `ACCESS_TOKEN_EXPIRE_MINUTES = 30`
+- Password hashing: bcrypt
+- Auth header format: `Authorization: Bearer {token}`
+- Bearer token extraction via HTTPBearer
 
-### User Features
-- Server-side cart calculation
-- Cart synchronization across sessions
-- Search products by name
-- Filter by category and price range
-- Copy cart to clipboard
+## Cart System
 
-## 🌐 Network Access
+**Authenticated Users:** Server-side cart calculation
+- Cart items stored in `cart_items` table
+- Total calculated on backend: `sum(item.product.price * item.quantity)`
+- Prevents price manipulation
 
-To access from mobile on the same network:
-1. Find your machine's IP: `ifconfig` (macOS/Linux) or `ipconfig` (Windows)
-2. Backend: `http://<YOUR_IP>:8000`
-3. Frontend: `http://<YOUR_IP>:8080` (vanilla) or `http://<YOUR_IP>:5173` (React)
+**Guest Users:** Client-side localStorage
+- LocalCart class stores items in `localCart` key
+- Methods: `add()`, `updateQuantity()`, `remove()`, `clear()`, `getTotal()`, `getItems()`
 
-## 📝 Environment Variables
+## Frontend Features
+
+### Responsive Design
+- **Desktop (960px+):** 2-column layout (products grid + sidebar cart)
+- **Tablet (768px-960px):** 1-column layout, cart on top
+- **Mobile (480px-768px):** Burger menu (☰), full-width layout, stack all inputs
+- **Small Mobile (<480px):** Compact grid (160px cards), reduced font sizes
+
+### UI Components
+- Product cards: image, category pill, stock badge, price, action buttons
+- Category filter: chip buttons, active state highlighting
+- Search bar: text input, min/max price inputs
+- Cart panel: sticky sidebar, item list, copy button, clear button
+- Admin panel: category form, product form, item lists with edit/delete
+
+### Styling
+- CSS variables: `--accent: #2563eb`, `--border: #e5e7eb`, `--shadow`
+- Border radius: 10px-20px
+- Gap/spacing: 8px-16px
+- Transitions: 120ms ease
+- Background gradients
+
+## Environment Variables
 
 ```env
 DATABASE_URL=sqlite:///./shop.db
@@ -169,17 +191,34 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 ```
 
-## 🔒 Security Notes
+## CORS Configuration
 
-- Passwords are hashed with bcrypt
-- Cart totals calculated on server (prevents price manipulation)
-- JWT tokens for authentication
-- CORS enabled (configure origins in production)
+Allowed origins: `["*"]` (all origins)
+Credentials: True
+Methods: All
+Headers: All
 
-## 📄 License
+## HTTP Status Codes
 
-MIT License - feel free to use this project for learning and development.
+- `200 OK` - Successful request
+- `400 Bad Request` - Invalid input (e.g., duplicate username)
+- `401 Unauthorized` - Missing/invalid token
+- `403 Forbidden` - Non-admin accessing admin endpoint
+- `404 Not Found` - Resource not found
 
----
+## Key Implementation Details
 
-**Built with ❤️ for e-commerce learning**
+1. **Server-side cart total:** Backend sums `product.price * quantity` for security
+2. **Guest cart persistence:** localStorage with JSON serialization
+3. **Admin initialization:** Default admin created on app startup if not exists
+4. **Price formatting:** `Intl.NumberFormat('ru-RU').format(price) + ' sum'`
+5. **Burger menu:** Toggle with `menu-open` class on `.topbar`
+6. **Image fallback:** `onerror` attribute loads placeholder from CDN
+7. **Clipboard copy:** Modern Fetch API with document.execCommand fallback for mobile
+
+## Performance Notes
+
+- Static files served from `frontend2/` directory
+- No build step required for frontend
+- SQLite for simplicity (suitable for small to medium apps)
+- Eager relationships for cart items (N+1 query prevention)
