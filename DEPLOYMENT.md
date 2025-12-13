@@ -2,6 +2,32 @@
 
 ## Hosting Options
 
+### Docker Compose (Local/Server)
+
+This repository includes Dockerfiles and `docker-compose.yml` to run both services.
+
+1. Create a `.env` next to `docker-compose.yml`:
+
+```
+SECRET_KEY=change_me
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+ALLOWED_ORIGINS=http://localhost:3000
+VITE_API_URL=http://localhost:8000
+```
+
+2. Build and start:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+- Backend: http://localhost:8000
+- Frontend: http://localhost:3000
+
+For a server/domain, set `ALLOWED_ORIGINS` and `VITE_API_URL` to your public URLs, and add HTTPS via a reverse proxy.
+
 ### 1. Render.com (Recommended - Free Tier)
 
 #### Backend Deployment

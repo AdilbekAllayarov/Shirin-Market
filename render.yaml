@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: shirin-magazin-backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////var/data/shop.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend.example
+    disks:
+      - name: data
+        mountPath: /var/data
+        sizeGB: 1
