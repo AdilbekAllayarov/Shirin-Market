@@ -237,3 +237,4 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment guide.
 - `docker-compose.yml` - Multi-container setup
 - `backend/.env.production` - Production environment template
 - `frontend2/js/config.js` - Dynamic API URL configuration
+# Shirin-Market
