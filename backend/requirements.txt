@@ -1,9 +1,7 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 sqlalchemy==2.0.23
-# Pin pydantic and pydantic-core to versions with prebuilt wheels on Linux
-pydantic==2.5.1
-pydantic-core==2.14.6
+pydantic==2.5.2
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
