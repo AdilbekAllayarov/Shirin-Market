@@ -18,8 +18,18 @@ services:
       - key: ADMIN_PASSWORD
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://your-frontend.example
+        value: https://shirin-market-frontend.onrender.com
     disks:
       - name: data
         mountPath: /var/data
         sizeGB: 1
+
+  - type: static_site
+    name: shirin-magazin-frontend
+    staticPublishPath: ./frontend/dist
+    buildCommand: npm install && npm run build
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://shirin-magazin-backend.onrender.com
