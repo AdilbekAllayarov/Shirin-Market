@@ -237,4 +237,50 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment guide.
 - `docker-compose.yml` - Multi-container setup
 - `backend/.env.production` - Production environment template
 - `frontend2/js/config.js` - Dynamic API URL configuration
-# Shirin-Market
+
+# Shirin Magazin API
+
+A FastAPI-based e-commerce backend for a candy store application.
+
+## Features
+
+- User authentication and authorization
+- Product and category management
+- Shopping cart functionality
+- Admin panel for managing products and categories
+
+## Setup
+
+1. Clone the repository
+2. Create virtual environment: `python -m venv venv`
+3. Activate: `source venv/bin/activate` (Mac/Linux) or `venv\Scripts\activate` (Windows)
+4. Install dependencies: `pip install -r requirements.txt`
+5. Copy `.env.example` to `.env` and configure
+6. Run: `uvicorn main:app --reload`
+
+## API Endpoints
+
+### Auth
+- POST `/auth/register` - Register new user
+- POST `/auth/login` - Login user
+- GET `/auth/me` - Get current user
+
+### Products
+- GET `/products` - List products
+- GET `/products/{id}` - Get product
+- POST `/products` - Create product (admin)
+- PUT `/products/{id}` - Update product (admin)
+- DELETE `/products/{id}` - Delete product (admin)
+
+### Categories
+- GET `/categories` - List categories
+- POST `/categories` - Create category (admin)
+- PUT `/categories/{id}` - Update category (admin)
+- DELETE `/categories/{id}` - Delete category (admin)
+
+### Cart
+- GET `/cart` - Get cart
+- POST `/cart` - Add to cart
+- PUT `/cart/{item_id}` - Update cart item
+- DELETE `/cart/{item_id}` - Remove from cart
+- DELETE `/cart` - Clear cart
