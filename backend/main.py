@@ -40,20 +40,24 @@ app.add_middleware(
 # Boshlang'ich admin yaratish
 @app.on_event("startup")
 async def startup_event():
-    db = next(get_db())
-    admin_username = os.getenv("ADMIN_USERNAME", "admin")
-    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
-    
-    admin = db.query(models.User).filter(models.User.username == admin_username).first()
-    if not admin:
-        admin = models.User(
-            username=admin_username,
-            hashed_password=get_password_hash(admin_password),
-            is_admin=True
-        )
-        db.add(admin)
-        db.commit()
-        print(f"Admin user created: {admin_username}")
+    try:
+        db = next(get_db())
+        admin_username = os.getenv("ADMIN_USERNAME", "admin")
+        admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+        
+        admin = db.query(models.User).filter(models.User.username == admin_username).first()
+        if not admin:
+            admin = models.User(
+                username=admin_username,
+                hashed_password=get_password_hash(admin_password),
+                is_admin=True
+            )
+            db.add(admin)
+            db.commit()
+            print(f"Admin user created: {admin_username}")
+        db.close()
+    except Exception as e:
+        print(f"Startup error: {e}")
 
 # AUTH ENDPOINTS
 @app.post("/auth/register", response_model=schemas.User)
