@@ -45,16 +45,21 @@ async def startup_event():
         admin_username = os.getenv("ADMIN_USERNAME", "admin")
         admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
         
+        # Eski admin'ni o'chir
         admin = db.query(models.User).filter(models.User.username == admin_username).first()
-        if not admin:
-            admin = models.User(
-                username=admin_username,
-                hashed_password=get_password_hash(admin_password),
-                is_admin=True
-            )
-            db.add(admin)
+        if admin:
+            db.delete(admin)
             db.commit()
-            print(f"Admin user created: {admin_username}")
+        
+        # Yangi admin yaratish
+        admin = models.User(
+            username=admin_username,
+            hashed_password=get_password_hash(admin_password),
+            is_admin=True
+        )
+        db.add(admin)
+        db.commit()
+        print(f"Admin user created/reset: {admin_username}")
         db.close()
     except Exception as e:
         print(f"Startup error: {e}")
