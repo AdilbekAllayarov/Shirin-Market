@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 import models
 import schemas
+import auth
 from database import engine, get_db
 from auth import (
     get_password_hash, 
@@ -80,17 +81,46 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/auth/login", response_model=schemas.Token)
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    print(f"[LOGIN DEBUG] Username received: {user.username}")
+    print(f"[LOGIN DEBUG] Password received: {user.password[:20]}..." if len(user.password) > 20 else f"[LOGIN DEBUG] Password received: {user.password}")
+    
+    # Step 1: User lookup
     db_user = db.query(models.User).filter(models.User.username == user.username).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+    print(f"[LOGIN DEBUG] User found in DB: {db_user is not None}")
+    
+    if db_user:
+        print(f"[LOGIN DEBUG] DB User ID: {db_user.id}, Username: {db_user.username}, Is Admin: {db_user.is_admin}")
+        print(f"[LOGIN DEBUG] Stored hash: {db_user.hashed_password[:50]}...")
+    
+    # Step 2: Password verification
+    if not db_user:
+        print(f"[LOGIN DEBUG] User not found in database")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password"
         )
     
+    password_valid = verify_password(user.password, db_user.hashed_password)
+    print(f"[LOGIN DEBUG] Password verification result: {password_valid}")
+    
+    if not password_valid:
+        print(f"[LOGIN DEBUG] Password verification failed")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
+    
+    # Step 3: JWT generation
+    print(f"[LOGIN DEBUG] Creating JWT token...")
+    print(f"[LOGIN DEBUG] SECRET_KEY exists: {bool(os.getenv('SECRET_KEY'))}")
+    print(f"[LOGIN DEBUG] ALGORITHM: {auth.ALGORITHM}")
+    
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": db_user.username}, expires_delta=access_token_expires
     )
+    print(f"[LOGIN DEBUG] JWT token created successfully")
+    
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/auth/me", response_model=schemas.User)

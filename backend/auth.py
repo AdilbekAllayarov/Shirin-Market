@@ -6,12 +6,17 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 import os
+import logging
 from dotenv import load_dotenv
 
 import models
 from database import get_db
 
 load_dotenv()
+
+# Setup logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this")
 ALGORITHM = "HS256"
@@ -21,10 +26,24 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password[:72], hashed_password)
+    try:
+        plain_truncated = plain_password[:72]
+        result = pwd_context.verify(plain_truncated, hashed_password)
+        logger.debug(f"Password verification result: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"Password verification error: {e}")
+        return False
 
 def get_password_hash(password):
-    return pwd_context.hash(password[:72])
+    try:
+        password_truncated = password[:72]
+        hashed = pwd_context.hash(password_truncated)
+        logger.debug(f"Password hashed successfully")
+        return hashed
+    except Exception as e:
+        logger.error(f"Password hashing error: {e}")
+        raise
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
