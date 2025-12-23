@@ -1,0 +1,6 @@
+# Deployment files
+.env.production
+*.env.local
+
+# Deployment logs
+deploy.log

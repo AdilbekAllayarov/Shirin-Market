@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: shirin-magazin-backend
+    env: python
+    pythonVersion: 3.11
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////var/data/shop.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://shirin-market-frontend.onrender.com
+    disks:
+      - name: data
+        mountPath: /var/data
+        sizeGB: 1
+
+  - type: static_site
+    name: shirin-magazin-frontend
+    staticPublishPath: frontend2
+    buildCommand: ""
+    autoDeploy: true
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://shirin-magazin-backend.onrender.com

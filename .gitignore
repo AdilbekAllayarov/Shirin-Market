@@ -1,0 +1,66 @@
+# macOS
+.DS_Store
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/.vercel/
+
+# Environment files
+.env
+.env.*
+backend/.env
+backend/.env.*
+
+# Databases & local state
+shop.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+
+# Build artifacts
+dist/
+build/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
