@@ -34,7 +34,7 @@ function App() {
   const [categoryForm, setCategoryForm] = useState(initialCategoryForm)
   const [editingProductId, setEditingProductId] = useState(null)
   const [adminModalOpen, setAdminModalOpen] = useState(false)
-  const [adminForm, setAdminForm] = useState({ username: 'admin', password: 'vshirin123' })
+  const [adminForm, setAdminForm] = useState({ username: 'admin', password: '' })
   const [showProductForm, setShowProductForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [minPrice, setMinPrice] = useState('')
