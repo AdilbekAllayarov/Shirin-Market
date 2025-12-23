@@ -1,13 +1,8 @@
 import axios from 'axios'
 
-// Single configurable base API URL (env-driven)
+// Single configurable base API URL (env-driven), default to Render URL
 const BASE_API_URL = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim())
-  || (import.meta.env.DEV ? 'http://localhost:8000' : '')
-
-if (!BASE_API_URL) {
-  // In production, require explicit VITE_API_URL to avoid localhost fallback
-  console.error('Missing VITE_API_URL. Set your Render backend URL in environment variables.')
-}
+  || 'https://shirin-market-backend.onrender.com'
 
 const api = axios.create({
   baseURL: BASE_API_URL,
