@@ -1,9 +1,34 @@
 # macOS
 .DS_Store
 
+# Editors
+.idea/
+.vscode/
+
 # Python
-venv/
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv
+env/
+venv/
 *.pyc
 *.pyo
 *.pyd
@@ -13,6 +38,9 @@ __pycache__/
 node_modules/
 frontend/dist/
 frontend/.vercel/
+*.swp
+*.swo
+*~
 
 # Environment files
 .env
@@ -34,33 +62,3 @@ shop.db
 # Build artifacts
 dist/
 build/
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-.env
-.venv
-env/
-venv/
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-.DS_Store
